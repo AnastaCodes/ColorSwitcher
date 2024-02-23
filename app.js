@@ -1,8 +1,9 @@
 const mainBox = document.querySelector('#main-box')
-let boxNumber = 7
-
+let boxNumber = 5
+let count = 5
 for (let i = 0; i < boxNumber; i++) {
     createItem();
+    count = 5
 }
 
 
@@ -26,9 +27,25 @@ document.addEventListener('click', (event) => {
     } else if (type === 'copy') {
         copyToClipboard(event.target.textContent)
     } else if (type === 'delete') {
+
         deleteItem(event.target)
+        count--
+        if (count < 3) {
+            const deleteButtons = document.querySelectorAll('button[data-type="delete"]');
+            deleteButtons.forEach(button => {
+                button.remove();
+            });
+
+        }
+
     } else if (type === 'add') {
-        createItem()
+        if (count > 12) {
+            alert("Hello! COUNT < 13");
+        } else {
+            createItem()
+            count++
+        }
+
         //  setRandomColors()
     }
 
@@ -36,29 +53,60 @@ document.addEventListener('click', (event) => {
 
 function createItem() {
     const colorBox = document.createElement('div');
+    const buttonsBox = document.createElement('div');
     const header = document.createElement('h2');
     const lockButton = document.createElement('button');
     const deleteButton = document.createElement('button');
+    const drugButton = document.createElement('button');
+    const copyButton = document.createElement('button');
+    const viewShadesButton = document.createElement('button');
+    const checkContrastButton = document.createElement('button');
+    const colorName = document.createElement('button');
     const lockIcon = document.createElement('i');
     const deleteIcon = document.createElement('i');
-
+    const drugIcon = document.createElement('i');
+    const copyIcon = document.createElement('i');
+    const viewShadesIcon = document.createElement('i');
+    const checkContrastIcon = document.createElement('i');
 
     colorBox.className = 'color-box';
+    buttonsBox.className = 'button-box';
     lockIcon.className = 'fa-solid fa-lock-open'
     deleteIcon.className = 'fa-solid fa-xmark'
+    drugIcon.className = 'fa-solid fa-arrows-left-right'
+    copyIcon.className = 'fa-regular fa-copy'
+    viewShadesIcon.className = 'fa-solid fa-layer-group'
+    checkContrastIcon.className = 'fa-solid fa-circle-half-stroke'
 
     header.setAttribute('data-type', 'copy');
     lockButton.setAttribute('data-type', 'lock');
     lockIcon.setAttribute('data-type', 'lock');
     deleteButton.setAttribute('data-type', 'delete');
     deleteIcon.setAttribute('data-type', 'delete');
+    drugButton.setAttribute('data-type', 'drug');
+    drugIcon.setAttribute('data-type', 'drug');
+    copyButton.setAttribute('data-type', 'copy');
+    copyIcon.setAttribute('data-type', 'copy');
+    viewShadesButton.setAttribute('data-type', 'shades');
+    viewShadesIcon.setAttribute('data-type', 'shades');
+    checkContrastButton.setAttribute('data-type', 'contrast');
+    checkContrastIcon.setAttribute('data-type', 'contrast');
 
     lockButton.appendChild(lockIcon);
     deleteButton.appendChild(deleteIcon);
-    colorBox.appendChild(header);
-    colorBox.appendChild(lockButton);
-    colorBox.appendChild(deleteButton);
+    drugButton.appendChild(drugIcon);
+    copyButton.appendChild(copyIcon);
+    viewShadesButton.appendChild(viewShadesIcon);
+    checkContrastButton.appendChild(checkContrastIcon);
 
+    buttonsBox.appendChild(lockButton);
+    buttonsBox.appendChild(deleteButton);
+    buttonsBox.appendChild(drugButton);
+    buttonsBox.appendChild(copyButton);
+    buttonsBox.appendChild(viewShadesButton);
+    buttonsBox.appendChild(checkContrastButton);
+    colorBox.appendChild(buttonsBox);
+    colorBox.appendChild(header);
     setRandomColorForNewItem(colorBox);
 
     mainBox.appendChild(colorBox)
@@ -67,12 +115,14 @@ function createItem() {
 function setRandomColorForNewItem(newItem) {
     const color = chroma.random();
     const text = newItem.querySelector('h2');
-    const button = newItem.querySelector('button');
+    let buttons = newItem.querySelectorAll('button');
 
     text.textContent = color;
     newItem.style.background = color;
     setTextColor(text, color);
-    setTextColor(button, color);
+    buttons.forEach((button) => {
+        setTextColor(button, color);
+    });
 }
 
 
@@ -111,7 +161,8 @@ function setRandomColors(isInitial) {
         const isLocked = col.querySelector('i').classList.contains('fa-lock')
         const text = col.querySelector('h2')
 
-        const button = col.querySelector('button')
+        let buttons = col.querySelectorAll('button');
+
         if (isLocked) {
             colors.push(text.textContent)
             return
@@ -131,7 +182,9 @@ function setRandomColors(isInitial) {
         text.textContent = color
         col.style.background = color
         setTextColor(text, color)
-        setTextColor(button, color)
+        buttons.forEach((button) => {
+            setTextColor(button, color);
+        });
     })
     updateColorsHash(colors)
 }
