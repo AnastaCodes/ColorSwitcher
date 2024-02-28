@@ -6,7 +6,6 @@ for (let i = 0; i < boxNumber; i++) {
     count = 5
 }
 
-
 document.addEventListener('keydown', event => {
     event.preventDefault()
     if (event.code.toLowerCase() === 'space') {
@@ -15,8 +14,8 @@ document.addEventListener('keydown', event => {
 })
 
 document.addEventListener('click', (event) => {
-    const type = event.target.dataset.type
-    console.log(type)
+    //const type = event.target.dataset.type
+    const type = event.target.dataset.type || event.target.parentNode.dataset.type;
 
     if (type === 'lock') {
         const node = event.target.tagName.toLowerCase() === 'i'
@@ -26,32 +25,52 @@ document.addEventListener('click', (event) => {
         node.classList.toggle('fa-lock')
     } else if (type === 'copy') {
         copyToClipboard(event.target.textContent)
-    } else if (type === 'delete') {
 
-        deleteItem(event.target)
-        count--
+    } else if (type === 'delete') {
+        deleteItem(event.target);
+        count--;
+
+        if (count < 12) {
+            document.querySelectorAll('button[data-type="add"]').forEach(button => button.remove());
+            insertPlusButtons();
+        }
+
         if (count < 3) {
             const deleteButtons = document.querySelectorAll('button[data-type="delete"]');
-            deleteButtons.forEach(button => {
+            deleteButtons.forEach(button => button.remove());
+        }
+    } else if (type === 'add') {
+        if (count >= 12) {
+            document.querySelectorAll('button[data-type="add"]').forEach(button => {
                 button.remove();
             });
-
+            return;
         }
 
-    } else if (type === 'add') {
-        if (count > 12) {
-            alert("Hello! COUNT < 13");
-        } else {
-            createItem()
-            count++
-        }
+        const button = event.target.tagName === 'BUTTON' ? event.target : event.target.parentNode;
+        const prevColorBox = button.previousElementSibling;
+        const nextColorBox = button.nextElementSibling;
 
-        //  setRandomColors()
+        if (prevColorBox && nextColorBox && prevColorBox.classList.contains('color-box') && nextColorBox.classList.contains('color-box')) {
+            const prevColor = chroma(prevColorBox.style.backgroundColor);
+            const nextColor = chroma(nextColorBox.style.backgroundColor);
+            const averageColor = chroma.mix(prevColor, nextColor, 0.5);
+
+            createItem(button, averageColor);
+            count++;
+
+            if (count >= 12) {
+                document.querySelectorAll('button[data-type="add"]').forEach(button => {
+                    button.remove();
+                });
+            }
+        }
+    } else if (type === 'repeat') {
+        setRandomColors()
     }
-
 })
 
-function createItem() {
+function createItem(insertAfterButton, color = chroma.random()) {
     const colorBox = document.createElement('div');
     const buttonsBox = document.createElement('div');
     const header = document.createElement('h2');
@@ -61,13 +80,17 @@ function createItem() {
     const copyButton = document.createElement('button');
     const viewShadesButton = document.createElement('button');
     const checkContrastButton = document.createElement('button');
+    const repeatButton = document.createElement('button');
+
     const colorName = document.createElement('button');
+
     const lockIcon = document.createElement('i');
     const deleteIcon = document.createElement('i');
     const drugIcon = document.createElement('i');
     const copyIcon = document.createElement('i');
     const viewShadesIcon = document.createElement('i');
     const checkContrastIcon = document.createElement('i');
+    const repeatIcon = document.createElement('i');
 
     colorBox.className = 'color-box';
     buttonsBox.className = 'button-box';
@@ -77,6 +100,7 @@ function createItem() {
     copyIcon.className = 'fa-regular fa-copy'
     viewShadesIcon.className = 'fa-solid fa-layer-group'
     checkContrastIcon.className = 'fa-solid fa-circle-half-stroke'
+    repeatIcon.className = 'fa-solid fa-arrow-rotate-right'
 
     header.setAttribute('data-type', 'copy');
     lockButton.setAttribute('data-type', 'lock');
@@ -91,6 +115,8 @@ function createItem() {
     viewShadesIcon.setAttribute('data-type', 'shades');
     checkContrastButton.setAttribute('data-type', 'contrast');
     checkContrastIcon.setAttribute('data-type', 'contrast');
+    repeatButton.setAttribute('data-type', 'repeat');
+    repeatIcon.setAttribute('data-type', 'repeat');
 
     lockButton.appendChild(lockIcon);
     deleteButton.appendChild(deleteIcon);
@@ -98,6 +124,7 @@ function createItem() {
     copyButton.appendChild(copyIcon);
     viewShadesButton.appendChild(viewShadesIcon);
     checkContrastButton.appendChild(checkContrastIcon);
+    repeatButton.appendChild(repeatIcon);
 
     buttonsBox.appendChild(lockButton);
     buttonsBox.appendChild(deleteButton);
@@ -105,12 +132,47 @@ function createItem() {
     buttonsBox.appendChild(copyButton);
     buttonsBox.appendChild(viewShadesButton);
     buttonsBox.appendChild(checkContrastButton);
+
     colorBox.appendChild(buttonsBox);
     colorBox.appendChild(header);
-    setRandomColorForNewItem(colorBox);
 
-    mainBox.appendChild(colorBox)
+
+    colorBox.style.background = color.css();
+    header.textContent = color.hex();
+
+    if (insertAfterButton) {
+        insertAfterButton.parentNode.insertBefore(colorBox, insertAfterButton.nextSibling);
+    } else {
+        mainBox.appendChild(colorBox);
+    }
+
+    insertPlusButtons();
 }
+
+function createPlusButtons() {
+    const plusButton = document.createElement('button');
+    const plusIcon = document.createElement('i');
+    plusIcon.className = 'fa-solid fa-plus'
+    plusButton.setAttribute('data-type', 'add');
+    plusIcon.setAttribute('data-type', 'add');
+    plusButton.appendChild(plusIcon);
+
+    return plusButton;
+}
+
+function insertPlusButtons() {
+    document.querySelectorAll('button[data-type="add"]').forEach(button => button.remove());
+
+    const colorBoxes = document.querySelectorAll('.color-box');
+
+    colorBoxes.forEach((box, index) => {
+        if (index < colorBoxes.length - 1) {
+            const plusButton = createPlusButtons();
+            box.parentNode.insertBefore(plusButton, box.nextSibling);
+        }
+    });
+}
+
 
 function setRandomColorForNewItem(newItem) {
     const color = chroma.random();
@@ -177,7 +239,6 @@ function setRandomColors(isInitial) {
         if (!isInitial) {
             colors.push(color)
         }
-
 
         text.textContent = color
         col.style.background = color

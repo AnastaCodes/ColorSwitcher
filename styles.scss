@@ -5,7 +5,7 @@
 }
 
 #main-box {
-  font-family: 'Roboto', sans-serif;
+
   height: 100vh;
   display: flex;
 }
@@ -58,3 +58,7 @@
   background: rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
+//button[data-type="add"]{
+ // position: absolute;
+ // right: 0;
+//}
