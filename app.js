@@ -10,6 +10,7 @@ document.addEventListener('keydown', event => {
     event.preventDefault()
     if (event.code.toLowerCase() === 'space') {
         setRandomColors()
+        setMenuButtonColor()
     }
 })
 
@@ -67,8 +68,13 @@ document.addEventListener('click', (event) => {
         }
     } else if (type === 'repeat') {
         setRandomColors()
+    } else if (type === 'menu') {
+        const navigation = document.querySelector('.blur-overlay');
+        navigation.style.opacity = '1';
+        navigation.style.top = '0';
     }
 })
+
 
 function createItem(insertAfterButton, color = chroma.random()) {
     const colorBox = document.createElement('div');
@@ -132,6 +138,7 @@ function createItem(insertAfterButton, color = chroma.random()) {
     buttonsBox.appendChild(copyButton);
     buttonsBox.appendChild(viewShadesButton);
     buttonsBox.appendChild(checkContrastButton);
+    buttonsBox.appendChild(repeatButton);
 
     colorBox.appendChild(buttonsBox);
     colorBox.appendChild(header);
@@ -255,5 +262,15 @@ function setTextColor(text, color) {
     text.style.color = luminance > 0.5 ? 'black' : 'white'
 }
 
+function setMenuButtonColor() {
+    const colorBoxes = document.querySelectorAll('.color-box');
+    const lastColorBox = colorBoxes[colorBoxes.length - 1];
+    const backgroundColor = window.getComputedStyle(lastColorBox, null).getPropertyValue('background-color');
+    const button = document.querySelector('.menu button');
+
+    button.style.color = backgroundColor;
+}
+
 setRandomColors(true)
+setMenuButtonColor()
 
