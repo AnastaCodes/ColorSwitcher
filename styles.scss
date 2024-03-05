@@ -16,12 +16,14 @@
   justify-content: center;
   position: relative;
 }
-.color-box:hover{
-  .button-box{
+
+.color-box:hover {
+  .button-box {
     opacity: 1;
   }
 }
-.button-box{
+
+.button-box {
   display: grid;
   opacity: 0;
   height: fit-content;
@@ -29,6 +31,7 @@
   position: absolute;
   transition: all 0.3s ease;
 }
+
 .color-box h2 {
   padding: 10px;
   color: #fff;
@@ -58,7 +61,74 @@
   background: rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
+
 //button[data-type="add"]{
- // position: absolute;
- // right: 0;
+// position: absolute;
+// right: 0;
 //}
+.blur-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  z-index: 2;
+  transition: all 1s ease-in;
+  width: 100%;
+  background: #fffafa21;
+  backdrop-filter: blur(100px);
+  position: absolute;
+  top: -60px;
+  opacity: 0;
+}
+
+.blur-overlay .nav-btn {
+  margin: 0 0.25rem;
+  padding: 0.25rem 1rem;
+  background: #0000000f;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  font-weight: 700;
+}
+
+.blur-overlay h1 {
+  margin-right: 2rem;
+}
+
+.menu {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 0;
+  background: linear-gradient(60deg, #fffdfd47, #10101017);
+  backdrop-filter: blur(100px);
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 0 50%;
+}
+
+.menu button {
+  border: none;
+  background: none;
+  font-size: 1.25rem;
+}
+
+button[data-type=add]{
+position: relative;
+  border: none;
+
+}
+
+button[data-type=add] i{
+  position: absolute;
+  z-index: 1;
+  width: 44px;
+  height: 44px;
+  backdrop-filter: blur(100px);
+  left: -22px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  bottom: 3vh;
+}
+
