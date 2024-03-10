@@ -27,7 +27,7 @@
   display: grid;
   opacity: 0;
   height: fit-content;
-  top: 3vh;
+  top: calc(3vh + 60px);
   position: absolute;
   transition: all 0.3s ease;
 }
@@ -99,7 +99,8 @@
   z-index: 1;
   right: 0;
   top: 0;
-  background: linear-gradient(60deg, #fffdfd47, #10101017);
+  //background: linear-gradient(60deg, #fffdfd47, #10101017);
+  background: #fffdfd47;
   backdrop-filter: blur(100px);
   padding: 0.5rem 1rem;
   border-radius: 0 0 0 50%;
@@ -131,4 +132,3 @@ button[data-type=add] i{
   font-size: 1.25rem;
   bottom: 3vh;
 }
-
