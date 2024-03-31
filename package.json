@@ -1,0 +1,19 @@
+{
+  "name": "colorswitcher",
+  "version": "1.0.0",
+  "description": "ColorSwitcher is a project designed for generating and managing color schemes. It allows users to easily create, view, and copy unique color combinations for use in web design, graphic design, and other projects that require color inspiration.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chroma-js": "^2.4.2"
+  },
+  "devDependencies": {
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  }
+}

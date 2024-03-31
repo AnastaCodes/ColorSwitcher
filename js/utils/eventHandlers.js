@@ -1,0 +1,168 @@
+import chroma from 'chroma-js';
+import {setMenuButtonColor, setRandomColorForNewItem, setRandomColors, setTextColor, showShades} from "./colorUtils.js";
+import {updateColorsAfterUserInteraction} from "../stateManagement.js";
+import {copyToClipboard, deleteItem, createItem, insertPlusButtons, deletePlusButtons} from "./domUtils.js";
+
+let draggedItem = null;
+
+document.addEventListener('click', (event) => {
+
+    let type;
+    if (event.target.dataset.type) {
+        type = event.target.dataset.type;
+    } else if (event.target.parentNode && event.target.parentNode.dataset.type) {
+        type = event.target.parentNode.dataset.type;
+    }
+    if (type) {
+        switch (type) {
+            case 'lock':
+                toggleLock(event.target);
+                break;
+            case 'copy':
+                copyToClipboard(event.target.textContent);
+                break;
+            case 'delete':
+                deleteItem(event.target);
+                updateUI();
+                break;
+            case 'add':
+                handleAdd(event.target);
+                break;
+            case 'repeat':
+                handleRepeat(event.target);
+                break;
+            case 'menu':
+                toggleMenu();
+                break;
+            case 'dropper':
+                handleDropper(event.target);
+                break;
+            case 'shades':
+                showShades(event.target.closest('.color-box'));
+                break;
+        }
+    }
+});
+
+function toggleLock(target) {
+    const node = target.tagName.toLowerCase() === 'i'
+        ? target
+        : target.children[0];
+    node.classList.toggle('fa-lock-open');
+    node.classList.toggle('fa-lock');
+    //  const isIcon = target.tagName.toLowerCase() === 'i';
+    //  const icon = isIcon ? target : target.querySelector('i');
+    //  icon.classList.toggle('fa-lock');
+    //  icon.classList.toggle('fa-lock-open');
+}
+
+function handleAdd(target) {
+    const allColorBoxes = document.querySelectorAll('.color-box');
+    if (allColorBoxes.length >= 12) {
+        return;
+    }
+
+    const button = target.tagName === 'BUTTON' ? target : target.parentNode;
+    const prevColorBox = button.previousElementSibling;
+    const nextColorBox = button.nextElementSibling;
+
+    if (prevColorBox && nextColorBox && prevColorBox.classList.contains('color-box') && nextColorBox.classList.contains('color-box')) {
+        const prevColor = chroma(prevColorBox.style.backgroundColor);
+        const nextColor = chroma(nextColorBox.style.backgroundColor);
+        const averageColor = chroma.mix(prevColor, nextColor, 0.5);
+
+        createItem(button, averageColor);
+        updateUI();
+    }
+}
+
+function handleRepeat(target) {
+    const colorBox = target.closest('.color-box');
+    setRandomColorForNewItem(colorBox);
+}
+
+function toggleMenu() {
+    const navigation = document.querySelector('.blur-overlay');
+    navigation.style.opacity = '1';
+    navigation.style.top = '0';
+}
+
+function handleDropper(target) {
+    const colorBox = target.closest('.color-box');
+    const currentColor = colorBox.style.backgroundColor;
+    const colorPicker = document.createElement('input');
+    colorPicker.type = 'color';
+    colorPicker.style.display = 'none';
+    colorPicker.value = chroma(currentColor).hex();
+
+    colorPicker.addEventListener('input', (e) => {
+        const selectedColor = e.target.value;
+        colorBox.style.backgroundColor = selectedColor;
+        const text = colorBox.querySelector('h2');
+        text.textContent = chroma(selectedColor).hex();
+        setTextColor(text, selectedColor);
+    });
+
+    colorPicker.addEventListener('change', () => {
+        updateColorsAfterUserInteraction();
+    });
+
+    document.body.appendChild(colorPicker);
+    colorPicker.click();
+    document.body.removeChild(colorPicker);
+}
+
+
+function updateUI() {
+    const allColorBoxes = document.querySelectorAll('.color-box');
+    document.querySelectorAll('button[data-type="add"]').forEach(button => button.remove());
+    insertPlusButtons();
+
+    if (allColorBoxes.length < 12) {
+        insertPlusButtons();
+    }
+    if (allColorBoxes.length >= 12) {
+        deletePlusButtons()
+    }
+    if (allColorBoxes.length < 3) {
+        document.querySelectorAll('button[data-type="delete"]').forEach(button => button.remove());
+    }
+    setTimeout(() => updateColorsAfterUserInteraction(), 0);
+}
+
+document.body.addEventListener('dragstart', event => {
+    if (event.target.classList.contains('color-box')) {
+        draggedItem = event.target;
+    }
+});
+
+document.body.addEventListener('dragover', event => {
+    event.preventDefault();
+    const target = event.target.closest('.color-box');
+    if (target && draggedItem !== target) {
+        const allBoxes = Array.from(document.querySelectorAll('.color-box'));
+        const draggedIndex = allBoxes.indexOf(draggedItem);
+        const targetIndex = allBoxes.indexOf(target);
+        if (draggedIndex < targetIndex) {
+            target.after(draggedItem);
+        } else {
+            target.before(draggedItem);
+        }
+    }
+});
+
+document.body.addEventListener('dragend', () => {
+    updateColorsAfterUserInteraction();
+    draggedItem = null;
+    updateUI();
+});
+
+document.addEventListener('keydown', event => {
+    if (event.code.toLowerCase() === 'space') {
+        event.preventDefault();
+        setRandomColors();
+        setMenuButtonColor();
+    }
+});
+
+
