@@ -14,10 +14,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   updateColorsAfterUserInteraction: () => (/* binding */ updateColorsAfterUserInteraction),
 /* harmony export */   updateColorsHash: () => (/* binding */ updateColorsHash)
 /* harmony export */ });
-/**
- * Extracts colors from the URL hash.
- * @returns {Array} An array of color strings.
- */
 function getColorsFromHash() {
     if (document.location.hash.length > 1) {
         return document.location.hash
@@ -28,19 +24,12 @@ function getColorsFromHash() {
     return [];
 }
 
-/**
- * Updates the URL hash with the current colors.
- * @param {Array} colors - An array of color strings.
- */
 function updateColorsHash(colors = []) {
     document.location.hash = colors
         .map(color => color.substring(1))
         .join('-');
 }
 
-/**
- * Updates the URL hash based on the current colors after user interaction.
- */
 function updateColorsAfterUserInteraction() {
     const colors = Array.from(document.querySelectorAll('.color-box'))
         .map(box => box.querySelector('h2').textContent);
@@ -71,10 +60,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-/**
- * Sets random colors for elements that are not locked by the user.
- * @param {boolean} isInitial - True if setting initial colors from the URL hash.
- */
 function setRandomColors(isInitial) {
     const colorBoxes = document.querySelectorAll('.color-box');
     const colors = isInitial ? (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_1__.getColorsFromHash)() : [];
@@ -94,11 +79,6 @@ function setRandomColors(isInitial) {
     (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_1__.updateColorsHash)(colors);
 }
 
-/**
- * Updates the background and text color of a color box.
- * @param {Element} box - The color box to update.
- * @param {chroma.Color} color - The chroma color object.
- */
 function updateColorBox(box, color) {
     const text = box.querySelector('h2');
     box.style.backgroundColor = color.css();
@@ -108,130 +88,90 @@ function updateColorBox(box, color) {
     box.querySelectorAll('button').forEach(button => setTextColor(button, color.hex()));
 }
 
-/**
- * Sets the text color of an element based on the luminance of its background color.
- * @param {Element} element - The element to set text color for.
- * @param {string} color - The HEX color value.
- */
 function setTextColor(element, color) {
     const luminance = chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(color).luminance();
     element.style.color = luminance > 0.5 ? 'black' : 'white';
 }
 
-/**
- * Sets a random color for a new element.
- * @param {Element} newItem - The new element to set the color for.
- */
 function setRandomColorForNewItem(newItem) {
     const color = chroma_js__WEBPACK_IMPORTED_MODULE_0___default().random();
     updateColorBox(newItem, color);
 }
 
-/**
- * Displays a gradient of shades for the selected color in a modal overlay.
- * @param {Element} colorBox - The color box element to display shades for.
- */
 function showShades(colorBox) {
     const currentColor = chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(colorBox.style.backgroundColor);
-    createShadesOverlay(currentColor);
-}
-
-/**
- * Creates and displays an overlay with shades of the specified color.
- * @param {chroma.Color} color - The base color to generate shades from.
- */
-function createShadesOverlay(color) {
     const backdrop = createBackdrop();
     const shadesContainer = createShadesContainer();
 
     document.body.appendChild(backdrop);
-    document.body.appendChild(shadesContainer);
+    colorBox.appendChild(shadesContainer);
 
-    generateShades(color, shadesContainer);
-
-    // Close the overlay on backdrop click
     backdrop.addEventListener('click', () => {
         backdrop.remove();
         shadesContainer.remove();
     });
+
+    generateShades(currentColor, shadesContainer);
 }
 
-/**
- * Creates a backdrop element for the shades overlay.
- * @returns {HTMLElement} The created backdrop element.
- */
+
 function createBackdrop() {
     const backdrop = document.createElement('div');
-    Object.assign(backdrop.style, {
-        position: 'fixed',
-        top: '0',
-        left: '0',
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        zIndex: '10'
-    });
+    backdrop.id = 'backdrop';
     return backdrop;
 }
 
-/**
- * Creates a container for the shades of a color.
- * @returns {HTMLElement} The created container element.
- */
 function createShadesContainer() {
     const container = document.createElement('div');
-    Object.assign(container.style, {
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        display: 'flex',
-        flexWrap: 'wrap',
-        width: '80%',
-        maxHeight: '80%',
-        overflowY: 'auto',
-        backgroundColor: '#FFF',
-        padding: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        zIndex: '11'
-    });
+    container.id = 'shades-container';
     return container;
 }
 
-/**
- * Generates and appends shade elements to the container based on the base color.
- * @param {chroma.Color} baseColor - The base color to generate shades from.
- * @param {HTMLElement} container - The container to append shade elements to.
- */
+function generateShades(baseColor, container) {
+    const totalShades = 20; // Количество генерируемых оттенков
+    const minLightness = 0.99; // Минимальная светлота, исключает абсолютный черный
+    const maxLightness = 0.01; // Максимальная светлота, исключает абсолютный белый
+
+    for (let i = 0; i < totalShades; i++) {
+        // Рассчитываем светлоту для каждого оттенка, исключая крайние значения
+        const lightnessRange = maxLightness - minLightness;
+        const lightness = minLightness + (lightnessRange * i / (totalShades - 1));
+        const shadeColor = chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(baseColor).luminance(lightness).hex();
+        createShade(shadeColor, container);
+    }
+}
+
+function createShade(shadeColor, container) {
+    const shade = document.createElement('div');
+    shade.className = 'shade';
+    Object.assign(shade.style, {
+        color: chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(shadeColor).luminance() > 0.5 ? 'black' : 'white',
+        backgroundColor: shadeColor
+    });
+
+    // Опционально, если не хотите показывать шестнадцатеричные коды цветов
+    shade.textContent = shadeColor;
+    container.appendChild(shade);
+}
+
+/*
 function generateShades(baseColor, container) {
     const totalShades = 10; // Adjust the number of shades as needed
 
     for (let i = 0; i < totalShades; i++) {
         const shade = document.createElement('div');
         const shadeColor = baseColor.darken(i / totalShades).hex();
-
+        shade.id = 'shade';
         Object.assign(shade.style, {
-            width: '100%',
-            padding: '10px',
-            color: chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(shadeColor).luminance() > 0.5 ? 'black' : 'white',
-            backgroundColor: shadeColor,
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            fontSize: '16px',
-            borderRadius: '4px',
-            margin: '5px 0'
+            color: chroma(shadeColor).luminance() > 0.5 ? 'black' : 'white',
+            backgroundColor: shadeColor
         });
 
         shade.textContent = shadeColor;
         container.appendChild(shade);
     }
 }
-
-/**
- * Sets the menu button color based on the last color box's background color.
- */
+*/
 function setMenuButtonColor() {
     const colorBoxes = document.querySelectorAll('.color-box');
     const lastColorBox = colorBoxes[colorBoxes.length - 1];
@@ -266,13 +206,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _stateManagement_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../stateManagement.js */ "./js/stateManagement.js");
 
 
-/**
- * Helper function to create a button with an icon.
- * @param {string} iconClass - CSS class for the icon.
- * @param {string} buttonType - Type of the button, used as a data attribute.
- * @returns {HTMLElement} - The created button element.
- */
-
 
 function createIconButton(iconClass, buttonType) {
     const button = document.createElement('button');
@@ -283,18 +216,10 @@ function createIconButton(iconClass, buttonType) {
     return button;
 }
 
-
-
-/**
- * Creates and appends a color box item with all necessary buttons and interactions.
- * @param {HTMLElement} insertAfterButton - The element after which the new color box will be inserted.
- * @param {string} color - The initial color of the color box, default is a random color.
- */
 function createItem(insertAfterButton, color) {
     const colorBox = document.createElement('div');
     colorBox.className = 'color-box';
 
-    // Убедимся, что color является объектом chroma
     const chromaColor = (typeof color === 'string') ? chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(color) : color;
 
     colorBox.style.background = chromaColor.hex();
@@ -303,7 +228,6 @@ function createItem(insertAfterButton, color) {
     const buttonsBox = document.createElement('div');
     buttonsBox.className = 'button-box';
 
-    // Array of button types and their corresponding icon classes
     const buttonConfigs = [
         { iconClass: 'fa-solid fa-lock-open', type: 'lock' },
         { iconClass: 'fa-solid fa-xmark', type: 'delete' },
@@ -314,7 +238,6 @@ function createItem(insertAfterButton, color) {
         { iconClass: 'fa-solid fa-arrow-rotate-right', type: 'repeat' }
     ];
 
-    // Creating and appending buttons to the button box
     buttonConfigs.forEach(({ iconClass, type }) => {
         const button = createIconButton(iconClass, type);
         buttonsBox.appendChild(button);
@@ -337,17 +260,11 @@ function createItem(insertAfterButton, color) {
     insertPlusButtons();
     (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_1__.updateColorsAfterUserInteraction)()
 }
-/**
- * Creates a plus button for adding new color boxes.
- * @returns {HTMLElement} The newly created plus button.
- */
+
 function createPlusButtons() {
     return createIconButton('fa-solid fa-plus', 'add');
 }
 
-/**
- * Inserts "add" buttons between color boxes for adding new colors.
- */
 function insertPlusButtons() {
     document.querySelectorAll('button[data-type="add"]').forEach(button => button.remove());
 
@@ -359,27 +276,17 @@ function insertPlusButtons() {
         }
     });
 }
-/**
- * Deletes "add" buttons between color boxes for adding new colors.
- */
+
 function deletePlusButtons() {
     document.querySelectorAll('button[data-type="add"]').forEach(button => button.remove());
 }
 
-/**
- * Deletes a color box from the document.
- * @param {HTMLElement} item - The button or element that triggered the delete action.
- */
 function deleteItem(item) {
     const closestDiv = item.closest('.color-box');
     closestDiv.remove();
     (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_1__.updateColorsAfterUserInteraction)()
 }
 
-/**
- * Copies the color hex code to clipboard.
- * @param {string} text - The text (color hex code) to be copied.
- */
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
 }
@@ -408,12 +315,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-// Возможно, вам понадобится объявить переменную draggedItem на уровне модуля,
-// если ваша логика перетаскивания зависит от неё.
 let draggedItem = null;
 
-// Использование делегирования для обработки событий на динамически создаваемых элементах
 document.addEventListener('click', (event) => {
 
     let type;
@@ -449,7 +352,6 @@ document.addEventListener('click', (event) => {
             case 'shades':
                 (0,_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.showShades)(event.target.closest('.color-box'));
                 break;
-            // Дополнительные case для других типов действий...
         }
     }
 });
@@ -563,11 +465,10 @@ document.body.addEventListener('dragover', event => {
 
 document.body.addEventListener('dragend', () => {
     (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_2__.updateColorsAfterUserInteraction)();
-    draggedItem = null; // Сбросить перетаскиваемый элемент после завершения перетаскивания
+    draggedItem = null;
     updateUI();
 });
 
-// Обработчик событий для назначения случайных цветов и обновления цвета кнопки меню
 document.addEventListener('keydown', event => {
     if (event.code.toLowerCase() === 'space') {
         event.preventDefault();
@@ -4263,14 +4164,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const initialColors = (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_2__.getColorsFromHash)(); // Получаем цвета как строки
+    const initialColors = (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_2__.getColorsFromHash)();
 
     for (let i = 0; i < initialColors.length; i++) {
-        const color = chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(initialColors[i]); // Преобразуем строку в объект chroma
-        (0,_utils_domUtils_js__WEBPACK_IMPORTED_MODULE_3__.createItem)(null, color); // Теперь передаем объект chroma
+        const color = chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(initialColors[i]);
+        (0,_utils_domUtils_js__WEBPACK_IMPORTED_MODULE_3__.createItem)(null, color);
     }
 
-    // Если initialColors пуст, создаем стандартное количество блоков с случайными цветами
     if(initialColors.length === 0) {
         for (let i = 0; i < 5; i++) {
             (0,_utils_domUtils_js__WEBPACK_IMPORTED_MODULE_3__.createItem)(null, chroma_js__WEBPACK_IMPORTED_MODULE_0___default().random());
