@@ -41,85 +41,78 @@ export function setRandomColorForNewItem(newItem) {
 
 export function showShades(colorBox) {
     const currentColor = chroma(colorBox.style.backgroundColor);
-    createShadesOverlay(currentColor);
-}
-
-function createShadesOverlay(color) {
     const backdrop = createBackdrop();
     const shadesContainer = createShadesContainer();
 
     document.body.appendChild(backdrop);
-    document.body.appendChild(shadesContainer);
+    colorBox.appendChild(shadesContainer);
 
-    generateShades(color, shadesContainer);
-
-    // Close the overlay on backdrop click
     backdrop.addEventListener('click', () => {
         backdrop.remove();
         shadesContainer.remove();
     });
+
+    generateShades(currentColor, shadesContainer);
 }
+
 
 function createBackdrop() {
     const backdrop = document.createElement('div');
-    Object.assign(backdrop.style, {
-        position: 'fixed',
-        top: '0',
-        left: '0',
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        zIndex: '10'
-    });
+    backdrop.id = 'backdrop';
     return backdrop;
 }
 
 function createShadesContainer() {
     const container = document.createElement('div');
-    Object.assign(container.style, {
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        display: 'flex',
-        flexWrap: 'wrap',
-        width: '80%',
-        maxHeight: '80%',
-        overflowY: 'auto',
-        backgroundColor: '#FFF',
-        padding: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        zIndex: '11'
-    });
+    container.id = 'shades-container';
     return container;
 }
 
+function generateShades(baseColor, container) {
+    const totalShades = 20; // Количество генерируемых оттенков
+    const minLightness = 0.99; // Минимальная светлота, исключает абсолютный черный
+    const maxLightness = 0.01; // Максимальная светлота, исключает абсолютный белый
+
+    for (let i = 0; i < totalShades; i++) {
+        // Рассчитываем светлоту для каждого оттенка, исключая крайние значения
+        const lightnessRange = maxLightness - minLightness;
+        const lightness = minLightness + (lightnessRange * i / (totalShades - 1));
+        const shadeColor = chroma(baseColor).luminance(lightness).hex();
+        createShade(shadeColor, container);
+    }
+}
+
+function createShade(shadeColor, container) {
+    const shade = document.createElement('div');
+    shade.className = 'shade';
+    Object.assign(shade.style, {
+        color: chroma(shadeColor).luminance() > 0.5 ? 'black' : 'white',
+        backgroundColor: shadeColor
+    });
+
+    // Опционально, если не хотите показывать шестнадцатеричные коды цветов
+    shade.textContent = shadeColor;
+    container.appendChild(shade);
+}
+
+/*
 function generateShades(baseColor, container) {
     const totalShades = 10; // Adjust the number of shades as needed
 
     for (let i = 0; i < totalShades; i++) {
         const shade = document.createElement('div');
         const shadeColor = baseColor.darken(i / totalShades).hex();
-
+        shade.id = 'shade';
         Object.assign(shade.style, {
-            width: '100%',
-            padding: '10px',
             color: chroma(shadeColor).luminance() > 0.5 ? 'black' : 'white',
-            backgroundColor: shadeColor,
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            fontSize: '16px',
-            borderRadius: '4px',
-            margin: '5px 0'
+            backgroundColor: shadeColor
         });
 
         shade.textContent = shadeColor;
         container.appendChild(shade);
     }
 }
-
+*/
 export function setMenuButtonColor() {
     const colorBoxes = document.querySelectorAll('.color-box');
     const lastColorBox = colorBoxes[colorBoxes.length - 1];
