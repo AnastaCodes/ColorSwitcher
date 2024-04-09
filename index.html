@@ -15,11 +15,19 @@
 
 </head>
 <body>
-<div class="menu">
-    <button data-type="menu"><i class="fa-solid fa-bars" data-type="menu"></i></button>
+<div id="main-box">
 </div>
-<div class="blur-overlay">
-        <h1>Color Scheme:</h1>
+<div id="additional">
+    <div>
+        <button data-type="manual" style="color: white;"><i class="fa-solid fa-info"></i></button>
+    </div>
+    <div class="additional-col-1">
+        <p>Press the spacebar to generate color palettes :)</p>
+    </div>
+    <div class="additional-col-2">
+        <p>Or here:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+        <div>
+            <button type="button" class="nav-btn active">Custom</button>
         <button type="button" class="nav-btn">Mono</button>
         <button type="button" class="nav-btn">Contrast</button>
         <button type="button" class="nav-btn">Triad</button>
@@ -27,10 +35,8 @@
         <button type="button" class="nav-btn">Analogy</button>
         <button type="button" class="nav-btn">Accent</button>
         <button type="button" class="nav-btn">Bootstrap 5</button>
-</div>
-<div id="main-box">
-</div>
-<div id="additional">Press the spacebar to generate color palettes :)
+    </div>
+    </div>
 </div>
 <script src="dist/bundle.js"></script>
 </body>

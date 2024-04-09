@@ -1,8 +1,8 @@
 import chroma from 'chroma-js';
 
-import { setRandomColors, setMenuButtonColor } from './utils/colorUtils.js';
-import { getColorsFromHash, updateColorsAfterUserInteraction } from './stateManagement.js';
-import { createItem } from './utils/domUtils.js';
+import {setRandomColors} from './utils/colorUtils.js';
+import {getColorsFromHash, updateColorsAfterUserInteraction} from './stateManagement.js';
+import {createItem} from './utils/domUtils.js';
 import * as  hh from "./utils/eventHandlers.js";
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         createItem(null, color);
     }
 
-    if(initialColors.length === 0) {
+    if (initialColors.length === 0) {
         for (let i = 0; i < 5; i++) {
             createItem(null, chroma.random());
         }
@@ -21,7 +21,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setRandomColors(true);
     updateColorsAfterUserInteraction();
-    setMenuButtonColor();
+
+/*
+    const colorBox = document.querySelector('.color-box');
+    const h2 = colorBox.querySelector('h2');
+
+    function adjustFontSize() {
+        const boxWidth = colorBox.offsetWidth;
+        const fontSize = Math.max(12, Math.min(24, boxWidth / 10));
+        h2.style.fontSize = `${fontSize}px`;
+    }
+    adjustFontSize();
+    window.addEventListener('resize', adjustFontSize);
+*/
 });
 
 
