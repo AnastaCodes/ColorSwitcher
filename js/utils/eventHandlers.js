@@ -1,5 +1,12 @@
 import chroma from 'chroma-js';
-import {setMenuButtonColor, setRandomColorForNewItem, setRandomColors, setTextColor, showShades} from "./colorUtils.js";
+import {
+    setRandomColorForNewItem,
+    setRandomColors,
+    setTextColor,
+    showShades,
+    updateColorBox,
+    editHexValue
+} from "./colorUtils.js";
 import {updateColorsAfterUserInteraction} from "../stateManagement.js";
 import {copyToClipboard, deleteItem, createItem, insertPlusButtons, deletePlusButtons} from "./domUtils.js";
 
@@ -31,14 +38,25 @@ document.addEventListener('click', (event) => {
             case 'repeat':
                 handleRepeat(event.target);
                 break;
-            case 'menu':
-                toggleMenu();
-                break;
             case 'dropper':
                 handleDropper(event.target);
                 break;
             case 'shades':
                 showShades(event.target.closest('.color-box'));
+                break;
+            case 'hex-value':
+                editHexValue(event.target.closest('.color-box'));
+                break;
+            case 'shade':
+                const colorBox = event.target.closest('.color-box');
+                let color = event.target.style.backgroundColor;
+                color = chroma(color).hex();
+                if (colorBox) {
+                    updateColorBox(colorBox, color);
+                    updateColorsAfterUserInteraction();
+                    document.querySelector('#shades-container').remove();
+                    document.querySelector('#backdrop').remove();
+                }
                 break;
         }
     }
@@ -81,12 +99,6 @@ function handleRepeat(target) {
     setRandomColorForNewItem(colorBox);
 }
 
-function toggleMenu() {
-    const navigation = document.querySelector('.blur-overlay');
-    navigation.style.opacity = '1';
-    navigation.style.top = '0';
-}
-
 function handleDropper(target) {
     const colorBox = target.closest('.color-box');
     const currentColor = colorBox.style.backgroundColor;
@@ -111,7 +123,6 @@ function handleDropper(target) {
     colorPicker.click();
     document.body.removeChild(colorPicker);
 }
-
 
 function updateUI() {
     const allColorBoxes = document.querySelectorAll('.color-box');
@@ -161,7 +172,6 @@ document.addEventListener('keydown', event => {
     if (event.code.toLowerCase() === 'space') {
         event.preventDefault();
         setRandomColors();
-        setMenuButtonColor();
     }
 });
 

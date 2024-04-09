@@ -23,23 +23,23 @@ export function createItem(insertAfterButton, color) {
     buttonsBox.className = 'button-box';
 
     const buttonConfigs = [
-        { iconClass: 'fa-solid fa-lock-open', type: 'lock' },
-        { iconClass: 'fa-solid fa-xmark', type: 'delete' },
-        { iconClass: 'fa-solid fa-arrows-left-right', type: 'drug' },
-        { iconClass: 'fa-regular fa-copy', type: 'copy' },
-        { iconClass: 'fa-solid fa-layer-group', type: 'shades' },
-        { iconClass: 'fa-solid fa-eye-dropper', type: 'dropper' },
-        { iconClass: 'fa-solid fa-arrow-rotate-right', type: 'repeat' }
+        {iconClass: 'fa-solid fa-lock-open', type: 'lock'},
+        {iconClass: 'fa-solid fa-xmark', type: 'delete'},
+        {iconClass: 'fa-solid fa-arrows-left-right', type: 'drug'},
+        {iconClass: 'fa-regular fa-copy', type: 'copy'},
+        {iconClass: 'fa-solid fa-layer-group', type: 'shades'},
+        {iconClass: 'fa-solid fa-eye-dropper', type: 'dropper'},
+        {iconClass: 'fa-solid fa-arrow-rotate-right', type: 'repeat'}
     ];
 
-    buttonConfigs.forEach(({ iconClass, type }) => {
+    buttonConfigs.forEach(({iconClass, type}) => {
         const button = createIconButton(iconClass, type);
         buttonsBox.appendChild(button);
     });
 
     const header = document.createElement('h2');
     header.textContent = color.hex();
-
+    header.setAttribute('data-type', 'hex-value');
     colorBox.appendChild(buttonsBox);
     colorBox.appendChild(header);
 
@@ -50,7 +50,6 @@ export function createItem(insertAfterButton, color) {
         document.querySelector('#main-box').appendChild(colorBox);
     }
 
-    // Update UI dynamically
     insertPlusButtons();
     updateColorsAfterUserInteraction()
 }
@@ -84,6 +83,3 @@ export function deleteItem(item) {
 export function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
 }
-
-
-

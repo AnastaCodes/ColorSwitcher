@@ -48,11 +48,12 @@ function updateColorsAfterUserInteraction() {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   setMenuButtonColor: () => (/* binding */ setMenuButtonColor),
+/* harmony export */   editHexValue: () => (/* binding */ editHexValue),
 /* harmony export */   setRandomColorForNewItem: () => (/* binding */ setRandomColorForNewItem),
 /* harmony export */   setRandomColors: () => (/* binding */ setRandomColors),
 /* harmony export */   setTextColor: () => (/* binding */ setTextColor),
-/* harmony export */   showShades: () => (/* binding */ showShades)
+/* harmony export */   showShades: () => (/* binding */ showShades),
+/* harmony export */   updateColorBox: () => (/* binding */ updateColorBox)
 /* harmony export */ });
 /* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! chroma-js */ "./node_modules/chroma-js/chroma.js");
 /* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(chroma_js__WEBPACK_IMPORTED_MODULE_0__);
@@ -80,12 +81,13 @@ function setRandomColors(isInitial) {
 }
 
 function updateColorBox(box, color) {
+    const chromaColor = chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(color);
     const text = box.querySelector('h2');
-    box.style.backgroundColor = color.css();
-    text.textContent = color.hex();
-    setTextColor(text, color.hex());
 
-    box.querySelectorAll('button').forEach(button => setTextColor(button, color.hex()));
+    box.style.backgroundColor = chromaColor.hex();
+    text.textContent = chromaColor.hex();
+    setTextColor(text, chromaColor.hex());
+    box.querySelectorAll('button').forEach(button => setTextColor(button, chromaColor.hex()));
 }
 
 function setTextColor(element, color) {
@@ -115,6 +117,53 @@ function showShades(colorBox) {
 }
 
 
+function editHexValue(colorBox) {
+    const element = colorBox.querySelector('h2');
+    const input = document.createElement('input');
+    const originalText = element.innerText;
+    const backdrop = createBackdrop();
+    backdrop.style.background = '#ffffff14';
+    document.body.appendChild(backdrop);
+
+    input.type = 'text';
+    input.value = element.innerText;
+    element.parentNode.replaceChild(input, element);
+    input.focus();
+
+
+    backdrop.addEventListener('click', () => {
+        element.innerText = originalText; // Восстановление текста h2
+        input.parentNode.replaceChild(element, input);
+        backdrop.remove();
+    });
+    input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            if (validateHex(input.value)) {
+                element.innerText = input.value;
+                input.parentNode.replaceChild(element, input);
+                updateColorBox(colorBox, input.value);
+                (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_1__.updateColorsAfterUserInteraction)();
+                backdrop.remove();
+            } else {
+                input.classList.add('shake');
+                input.addEventListener('animationend', () => {
+                    input.classList.remove('shake');
+                }, {once: true});
+                input.focus();
+            }
+        }
+    });
+    input.addEventListener('click', function () {
+        input.classList.remove('shake');
+        input.classList.remove('input-error');
+    });
+}
+
+function validateHex(hex) {
+    return /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/.test(hex);
+}
+
+
 function createBackdrop() {
     const backdrop = document.createElement('div');
     backdrop.id = 'backdrop';
@@ -128,12 +177,11 @@ function createShadesContainer() {
 }
 
 function generateShades(baseColor, container) {
-    const totalShades = 20; // Количество генерируемых оттенков
-    const minLightness = 0.99; // Минимальная светлота, исключает абсолютный черный
-    const maxLightness = 0.01; // Максимальная светлота, исключает абсолютный белый
+    const totalShades = 20;
+    const minLightness = 0.99;
+    const maxLightness = 0.01;
 
     for (let i = 0; i < totalShades; i++) {
-        // Рассчитываем светлоту для каждого оттенка, исключая крайние значения
         const lightnessRange = maxLightness - minLightness;
         const lightness = minLightness + (lightnessRange * i / (totalShades - 1));
         const shadeColor = chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(baseColor).luminance(lightness).hex();
@@ -144,44 +192,15 @@ function generateShades(baseColor, container) {
 function createShade(shadeColor, container) {
     const shade = document.createElement('div');
     shade.className = 'shade';
+    shade.setAttribute('data-type', 'shade');
     Object.assign(shade.style, {
         color: chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(shadeColor).luminance() > 0.5 ? 'black' : 'white',
         backgroundColor: shadeColor
     });
 
-    // Опционально, если не хотите показывать шестнадцатеричные коды цветов
     shade.textContent = shadeColor;
     container.appendChild(shade);
 }
-
-/*
-function generateShades(baseColor, container) {
-    const totalShades = 10; // Adjust the number of shades as needed
-
-    for (let i = 0; i < totalShades; i++) {
-        const shade = document.createElement('div');
-        const shadeColor = baseColor.darken(i / totalShades).hex();
-        shade.id = 'shade';
-        Object.assign(shade.style, {
-            color: chroma(shadeColor).luminance() > 0.5 ? 'black' : 'white',
-            backgroundColor: shadeColor
-        });
-
-        shade.textContent = shadeColor;
-        container.appendChild(shade);
-    }
-}
-*/
-function setMenuButtonColor() {
-    const colorBoxes = document.querySelectorAll('.color-box');
-    const lastColorBox = colorBoxes[colorBoxes.length - 1];
-    if (!lastColorBox) return; // Check if the lastColorBox exists
-
-    const backgroundColor = window.getComputedStyle(lastColorBox, null).getPropertyValue('background-color');
-    const button = document.querySelector('.menu button');
-    if (button) button.style.color = backgroundColor; // Check if the button exists
-}
-
 
 /***/ }),
 
@@ -245,7 +264,7 @@ function createItem(insertAfterButton, color) {
 
     const header = document.createElement('h2');
     header.textContent = color.hex();
-
+    header.setAttribute('data-type','hex-value' );
     colorBox.appendChild(buttonsBox);
     colorBox.appendChild(header);
 
@@ -343,14 +362,25 @@ document.addEventListener('click', (event) => {
             case 'repeat':
                 handleRepeat(event.target);
                 break;
-            case 'menu':
-                toggleMenu();
-                break;
             case 'dropper':
                 handleDropper(event.target);
                 break;
             case 'shades':
                 (0,_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.showShades)(event.target.closest('.color-box'));
+                break;
+            case 'hex-value':
+                (0,_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.editHexValue)(event.target.closest('.color-box'));
+                break;
+            case 'shade':
+                const colorBox = event.target.closest('.color-box');
+                let color = event.target.style.backgroundColor;
+                color = chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(color).hex();
+                if (colorBox) {
+                    (0,_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.updateColorBox)(colorBox, color);
+                    (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_2__.updateColorsAfterUserInteraction)();
+                    document.querySelector('#shades-container').remove();
+                    document.querySelector('#backdrop').remove();
+                }
                 break;
         }
     }
@@ -393,12 +423,6 @@ function handleRepeat(target) {
     (0,_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.setRandomColorForNewItem)(colorBox);
 }
 
-function toggleMenu() {
-    const navigation = document.querySelector('.blur-overlay');
-    navigation.style.opacity = '1';
-    navigation.style.top = '0';
-}
-
 function handleDropper(target) {
     const colorBox = target.closest('.color-box');
     const currentColor = colorBox.style.backgroundColor;
@@ -423,7 +447,6 @@ function handleDropper(target) {
     colorPicker.click();
     document.body.removeChild(colorPicker);
 }
-
 
 function updateUI() {
     const allColorBoxes = document.querySelectorAll('.color-box');
@@ -473,7 +496,6 @@ document.addEventListener('keydown', event => {
     if (event.code.toLowerCase() === 'space') {
         event.preventDefault();
         (0,_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.setRandomColors)();
-        (0,_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.setMenuButtonColor)();
     }
 });
 
@@ -4171,7 +4193,7 @@ document.addEventListener('DOMContentLoaded', () => {
         (0,_utils_domUtils_js__WEBPACK_IMPORTED_MODULE_3__.createItem)(null, color);
     }
 
-    if(initialColors.length === 0) {
+    if (initialColors.length === 0) {
         for (let i = 0; i < 5; i++) {
             (0,_utils_domUtils_js__WEBPACK_IMPORTED_MODULE_3__.createItem)(null, chroma_js__WEBPACK_IMPORTED_MODULE_0___default().random());
         }
@@ -4179,7 +4201,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     (0,_utils_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.setRandomColors)(true);
     (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_2__.updateColorsAfterUserInteraction)();
-    (0,_utils_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.setMenuButtonColor)();
+
+
+    const colorBox = document.querySelector('.color-box');
+    const h2 = colorBox.querySelector('h2');
+
+    function adjustFontSize() {
+        // Получаем ширину контейнера
+        const boxWidth = colorBox.offsetWidth;
+        // Вычисляем размер шрифта, например, 10% от ширины контейнера
+        const fontSize = Math.max(12, Math.min(24, boxWidth / 10));
+        h2.style.fontSize = `${fontSize}px`;
+    }
+
+    // Вызов функции при загрузке страницы
+    adjustFontSize();
+    // Вызов функции при изменении размера окна
+    window.addEventListener('resize', adjustFontSize);
+
 });
 
 

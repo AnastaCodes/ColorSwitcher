@@ -1,5 +1,5 @@
 import chroma from 'chroma-js';
-import {getColorsFromHash, updateColorsHash} from '../stateManagement.js';
+import {getColorsFromHash, updateColorsAfterUserInteraction, updateColorsHash} from '../stateManagement.js';
 
 export function setRandomColors(isInitial) {
     const colorBoxes = document.querySelectorAll('.color-box');
@@ -20,13 +20,14 @@ export function setRandomColors(isInitial) {
     updateColorsHash(colors);
 }
 
-function updateColorBox(box, color) {
+export function updateColorBox(box, color) {
+    const chromaColor = chroma(color);
     const text = box.querySelector('h2');
-    box.style.backgroundColor = color.css();
-    text.textContent = color.hex();
-    setTextColor(text, color.hex());
 
-    box.querySelectorAll('button').forEach(button => setTextColor(button, color.hex()));
+    box.style.backgroundColor = chromaColor.hex();
+    text.textContent = chromaColor.hex();
+    setTextColor(text, chromaColor.hex());
+    box.querySelectorAll('button').forEach(button => setTextColor(button, chromaColor.hex()));
 }
 
 export function setTextColor(element, color) {
@@ -56,6 +57,54 @@ export function showShades(colorBox) {
 }
 
 
+export function editHexValue(colorBox) {
+    const element = colorBox.querySelector('h2');
+    const input = document.createElement('input');
+    const originalText = element.innerText;
+    const backdrop = createBackdrop();
+
+    backdrop.style.background = '#ffffff14';
+    document.body.appendChild(backdrop);
+
+    input.type = 'text';
+    input.value = element.innerText;
+    element.parentNode.replaceChild(input, element);
+    input.focus();
+
+    backdrop.addEventListener('click', () => {
+        element.innerText = originalText;
+        input.parentNode.replaceChild(element, input);
+        backdrop.remove();
+    });
+
+    input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            if (validateHex(input.value)) {
+                element.innerText = input.value;
+                input.parentNode.replaceChild(element, input);
+                updateColorBox(colorBox, input.value);
+                updateColorsAfterUserInteraction();
+                backdrop.remove();
+            } else {
+                input.classList.add('shake');
+                input.addEventListener('animationend', () => {
+                    input.classList.remove('shake');
+                }, {once: true});
+                input.focus();
+            }
+        }
+    });
+
+    input.addEventListener('click', function () {
+        input.classList.remove('shake');
+        input.classList.remove('input-error');
+    });
+}
+
+function validateHex(hex) {
+    return /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/.test(hex);
+}
+
 function createBackdrop() {
     const backdrop = document.createElement('div');
     backdrop.id = 'backdrop';
@@ -69,12 +118,11 @@ function createShadesContainer() {
 }
 
 function generateShades(baseColor, container) {
-    const totalShades = 20; // Количество генерируемых оттенков
-    const minLightness = 0.99; // Минимальная светлота, исключает абсолютный черный
-    const maxLightness = 0.01; // Максимальная светлота, исключает абсолютный белый
+    const totalShades = 20;
+    const minLightness = 0.99;
+    const maxLightness = 0.01;
 
     for (let i = 0; i < totalShades; i++) {
-        // Рассчитываем светлоту для каждого оттенка, исключая крайние значения
         const lightnessRange = maxLightness - minLightness;
         const lightness = minLightness + (lightnessRange * i / (totalShades - 1));
         const shadeColor = chroma(baseColor).luminance(lightness).hex();
@@ -85,40 +133,12 @@ function generateShades(baseColor, container) {
 function createShade(shadeColor, container) {
     const shade = document.createElement('div');
     shade.className = 'shade';
+    shade.setAttribute('data-type', 'shade');
     Object.assign(shade.style, {
         color: chroma(shadeColor).luminance() > 0.5 ? 'black' : 'white',
         backgroundColor: shadeColor
     });
 
-    // Опционально, если не хотите показывать шестнадцатеричные коды цветов
     shade.textContent = shadeColor;
     container.appendChild(shade);
-}
-
-/*
-function generateShades(baseColor, container) {
-    const totalShades = 10; // Adjust the number of shades as needed
-
-    for (let i = 0; i < totalShades; i++) {
-        const shade = document.createElement('div');
-        const shadeColor = baseColor.darken(i / totalShades).hex();
-        shade.id = 'shade';
-        Object.assign(shade.style, {
-            color: chroma(shadeColor).luminance() > 0.5 ? 'black' : 'white',
-            backgroundColor: shadeColor
-        });
-
-        shade.textContent = shadeColor;
-        container.appendChild(shade);
-    }
-}
-*/
-export function setMenuButtonColor() {
-    const colorBoxes = document.querySelectorAll('.color-box');
-    const lastColorBox = colorBoxes[colorBoxes.length - 1];
-    if (!lastColorBox) return; // Check if the lastColorBox exists
-
-    const backgroundColor = window.getComputedStyle(lastColorBox, null).getPropertyValue('background-color');
-    const button = document.querySelector('.menu button');
-    if (button) button.style.color = backgroundColor; // Check if the button exists
 }
