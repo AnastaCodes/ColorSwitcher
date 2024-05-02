@@ -122,6 +122,7 @@ function editHexValue(colorBox) {
     const input = document.createElement('input');
     const originalText = element.innerText;
     const backdrop = createBackdrop();
+
     backdrop.style.background = '#ffffff14';
     document.body.appendChild(backdrop);
 
@@ -130,12 +131,12 @@ function editHexValue(colorBox) {
     element.parentNode.replaceChild(input, element);
     input.focus();
 
-
     backdrop.addEventListener('click', () => {
-        element.innerText = originalText; // Восстановление текста h2
+        element.innerText = originalText;
         input.parentNode.replaceChild(element, input);
         backdrop.remove();
     });
+
     input.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') {
             if (validateHex(input.value)) {
@@ -153,6 +154,7 @@ function editHexValue(colorBox) {
             }
         }
     });
+
     input.addEventListener('click', function () {
         input.classList.remove('shake');
         input.classList.remove('input-error');
@@ -162,7 +164,6 @@ function editHexValue(colorBox) {
 function validateHex(hex) {
     return /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/.test(hex);
 }
-
 
 function createBackdrop() {
     const backdrop = document.createElement('div');
@@ -248,23 +249,23 @@ function createItem(insertAfterButton, color) {
     buttonsBox.className = 'button-box';
 
     const buttonConfigs = [
-        { iconClass: 'fa-solid fa-lock-open', type: 'lock' },
-        { iconClass: 'fa-solid fa-xmark', type: 'delete' },
-        { iconClass: 'fa-solid fa-arrows-left-right', type: 'drug' },
-        { iconClass: 'fa-regular fa-copy', type: 'copy' },
-        { iconClass: 'fa-solid fa-layer-group', type: 'shades' },
-        { iconClass: 'fa-solid fa-eye-dropper', type: 'dropper' },
-        { iconClass: 'fa-solid fa-arrow-rotate-right', type: 'repeat' }
+        {iconClass: 'fa-solid fa-lock-open', type: 'lock'},
+        {iconClass: 'fa-solid fa-xmark', type: 'delete'},
+        {iconClass: 'fa-solid fa-arrows-left-right', type: 'drug'},
+        {iconClass: 'fa-regular fa-copy', type: 'copy'},
+        {iconClass: 'fa-solid fa-layer-group', type: 'shades'},
+        {iconClass: 'fa-solid fa-eye-dropper', type: 'dropper'},
+        {iconClass: 'fa-solid fa-arrow-rotate-right', type: 'repeat'}
     ];
 
-    buttonConfigs.forEach(({ iconClass, type }) => {
+    buttonConfigs.forEach(({iconClass, type}) => {
         const button = createIconButton(iconClass, type);
         buttonsBox.appendChild(button);
     });
 
     const header = document.createElement('h2');
     header.textContent = color.hex();
-    header.setAttribute('data-type','hex-value' );
+    header.setAttribute('data-type', 'hex-value');
     colorBox.appendChild(buttonsBox);
     colorBox.appendChild(header);
 
@@ -275,7 +276,6 @@ function createItem(insertAfterButton, color) {
         document.querySelector('#main-box').appendChild(colorBox);
     }
 
-    // Update UI dynamically
     insertPlusButtons();
     (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_1__.updateColorsAfterUserInteraction)()
 }
@@ -309,9 +309,6 @@ function deleteItem(item) {
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text);
 }
-
-
-
 
 
 /***/ }),
@@ -500,6 +497,19 @@ document.addEventListener('keydown', event => {
 });
 
 
+
+
+/***/ }),
+
+/***/ "./css/styles.scss":
+/*!*************************!*\
+  !*** ./css/styles.scss ***!
+  \*************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
 
 
 /***/ }),
@@ -4174,10 +4184,11 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! chroma-js */ "./node_modules/chroma-js/chroma.js");
 /* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(chroma_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _utils_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils/colorUtils.js */ "./js/utils/colorUtils.js");
-/* harmony import */ var _stateManagement_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./stateManagement.js */ "./js/stateManagement.js");
-/* harmony import */ var _utils_domUtils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils/domUtils.js */ "./js/utils/domUtils.js");
-/* harmony import */ var _utils_eventHandlers_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils/eventHandlers.js */ "./js/utils/eventHandlers.js");
+/* harmony import */ var _css_styles_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../css/styles.scss */ "./css/styles.scss");
+/* harmony import */ var _utils_colorUtils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/colorUtils.js */ "./js/utils/colorUtils.js");
+/* harmony import */ var _stateManagement_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./stateManagement.js */ "./js/stateManagement.js");
+/* harmony import */ var _utils_domUtils_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils/domUtils.js */ "./js/utils/domUtils.js");
+/* harmony import */ var _utils_eventHandlers_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils/eventHandlers.js */ "./js/utils/eventHandlers.js");
 
 
 
@@ -4186,43 +4197,23 @@ __webpack_require__.r(__webpack_exports__);
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const initialColors = (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_2__.getColorsFromHash)();
+    const initialColors = (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_3__.getColorsFromHash)();
 
     for (let i = 0; i < initialColors.length; i++) {
         const color = chroma_js__WEBPACK_IMPORTED_MODULE_0___default()(initialColors[i]);
-        (0,_utils_domUtils_js__WEBPACK_IMPORTED_MODULE_3__.createItem)(null, color);
+        (0,_utils_domUtils_js__WEBPACK_IMPORTED_MODULE_4__.createItem)(null, color);
     }
 
     if (initialColors.length === 0) {
         for (let i = 0; i < 5; i++) {
-            (0,_utils_domUtils_js__WEBPACK_IMPORTED_MODULE_3__.createItem)(null, chroma_js__WEBPACK_IMPORTED_MODULE_0___default().random());
+            (0,_utils_domUtils_js__WEBPACK_IMPORTED_MODULE_4__.createItem)(null, chroma_js__WEBPACK_IMPORTED_MODULE_0___default().random());
         }
     }
 
-    (0,_utils_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.setRandomColors)(true);
-    (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_2__.updateColorsAfterUserInteraction)();
-
-
-    const colorBox = document.querySelector('.color-box');
-    const h2 = colorBox.querySelector('h2');
-
-    function adjustFontSize() {
-        // Получаем ширину контейнера
-        const boxWidth = colorBox.offsetWidth;
-        // Вычисляем размер шрифта, например, 10% от ширины контейнера
-        const fontSize = Math.max(12, Math.min(24, boxWidth / 10));
-        h2.style.fontSize = `${fontSize}px`;
-    }
-
-    // Вызов функции при загрузке страницы
-    adjustFontSize();
-    // Вызов функции при изменении размера окна
-    window.addEventListener('resize', adjustFontSize);
+    (0,_utils_colorUtils_js__WEBPACK_IMPORTED_MODULE_2__.setRandomColors)(true);
+    (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_3__.updateColorsAfterUserInteraction)();
 
 });
-
-
-
 })();
 
 /******/ })()

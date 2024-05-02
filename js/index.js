@@ -1,5 +1,5 @@
 import chroma from 'chroma-js';
-
+import '../css/styles.scss';
 import {setRandomColors} from './utils/colorUtils.js';
 import {getColorsFromHash, updateColorsAfterUserInteraction} from './stateManagement.js';
 import {createItem} from './utils/domUtils.js';
@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     adjustFontSize();
     window.addEventListener('resize', adjustFontSize);
-*/
+
+     */
 });
-
-
