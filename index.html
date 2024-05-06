@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="dist/styles.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -19,7 +19,7 @@
 </div>
 <div id="additional">
     <div>
-        <button data-type="manual" style="color: white;"><i class="fa-solid fa-info"></i></button>
+        <button data-type="manual"><i class="fa-solid fa-info"></i></button>
     </div>
     <div class="additional-col-1">
         <p>Press the spacebar to generate color palettes :)</p>
@@ -28,14 +28,60 @@
         <p>Or here:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
         <div>
             <button type="button" class="nav-btn active">Custom</button>
-        <button type="button" class="nav-btn">Mono</button>
-        <button type="button" class="nav-btn">Contrast</button>
-        <button type="button" class="nav-btn">Triad</button>
-        <button type="button" class="nav-btn">Tetrad</button>
-        <button type="button" class="nav-btn">Analogy</button>
-        <button type="button" class="nav-btn">Accent</button>
-        <button type="button" class="nav-btn">Bootstrap 5</button>
+            <button type="button" class="nav-btn">Mono</button>
+            <button type="button" class="nav-btn">Contrast</button>
+            <button type="button" class="nav-btn">Triad</button>
+            <button type="button" class="nav-btn">Tetrad</button>
+            <button type="button" class="nav-btn">Analogy</button>
+            <button type="button" class="nav-btn">Accent</button>
+            <button type="button" class="nav-btn">Bootstrap 5</button>
+        </div>
     </div>
+</div>
+<div class="modal-content">
+    <span class="close"><i class="fa-solid fa-xmark"></i></span>
+    <h1><b>Welcome to Color Switcher! </b></h1>
+    <p><br>I'm thrilled you're here. Color Switcher is my pet project crafted with the dual purpose of mastering JavaScript and simplifying the workdays of those engaged in web color selection.<br></p>
+    <div class="modal-col-2">
+        <div>
+            <p><b>Quick Guide:</b></p>
+            <p>Press the spacebar to generate random colors instantly. On the bottom right panel, you'll find various modules for color generation (coming soon).</p>
+            <p>Clicking the plus icon between colors blends a mid-color seamlessly between adjacent ones. You can have a maximum of 12 colors.</p>
+            <p>Color Switcher automatically updates the URL in your browser, allowing you to easily share your generated color schemes with others!</p>
+            <p>Dive in, explore, and let Color Switcher brighten your web color selection journey!</p>
+        </div>
+        <div class="color-block"><p>Hover over a color block to reveal control buttons:</p>
+            <table>
+                <tr>
+                    <td><i class="fa-solid fa-lock-open"></i></td>
+                    <td>Secure any color you desire; once locked, it won't change upon spacebar hits.</td>
+                </tr>
+                <tr>
+                    <td><i class="fa-solid fa-info"></i></td>
+                    <td>Remove unwanted colors; you must have a minimum of two colors.</td>
+                </tr>
+                <tr>
+                    <td><i class="fa-solid fa-arrows-left-right"></i></td>
+                    <td>Rearrange colors effortlessly through drag and drop.</td>
+                </tr>
+                <tr>
+                    <td><i class="fa-regular fa-copy"></i></td>
+                    <td>Duplicate a color's code to your clipboard with a single click.</td>
+                </tr>
+                <tr>
+                    <td><i class="fa-solid fa-layer-group"></i></td>
+                    <td>Display 20 saturation levels for the chosen color; clicking applies it to the block.</td>
+                </tr>
+                <tr>
+                    <td><i class="fa-solid fa-eye-dropper"></i></td>
+                    <td>Handpick a color using your browser's standard tool.</td>
+                </tr>
+                <tr>
+                    <td><i class="fa-solid fa-arrow-rotate-right"></i></td>
+                    <td>Re-generate only the selected color, maintaining the others as they are.</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
 <script src="dist/bundle.js"></script>

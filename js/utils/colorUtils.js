@@ -105,7 +105,7 @@ function validateHex(hex) {
     return /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/.test(hex);
 }
 
-function createBackdrop() {
+export function createBackdrop() {
     const backdrop = document.createElement('div');
     backdrop.id = 'backdrop';
     return backdrop;
