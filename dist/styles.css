@@ -12,6 +12,17 @@
     transform: translateX(5px);
   }
 }
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 .shake {
   animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   background-color: rgba(255, 0, 0, 0.4196078431) !important;
@@ -37,58 +48,116 @@
   position: absolute;
   bottom: 0;
   width: 100%;
+  display: flex;
 }
-
-#additional, .additional-col-1, .additional-col-2 {
+#additional .additional-col-1 {
   display: flex;
   justify-content: center;
   align-content: center;
   align-items: center;
-}
-
-.additional-col-1, .additional-col-2 {
   width: 50%;
   height: 100%;
 }
-
-.additional-col-2 {
+#additional .additional-col-2 {
+  align-content: center;
+  align-items: center;
+  width: 50%;
+  height: 100%;
   display: flex;
   justify-content: flex-end;
 }
-.additional-col-2 div {
+#additional .additional-col-2 div {
   height: 100%;
 }
-
 #additional button {
-  border: none;
-  background: none;
-  padding: 0.5rem;
-  border-radius: 0.25rem;
   color: white;
-  height: 100%;
-  margin: 0;
 }
-
-#additional button:hover {
-  background: rgba(49, 6, 61, 0.3803921569);
-}
-
 #additional button.active {
   background: rgba(4, 4, 4, 0.6588235294);
 }
-
 #additional button.active:hover {
   background: rgba(4, 4, 4, 0.6588235294);
+  cursor: default;
 }
 
-#backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 10;
+.color-box {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+.color-box:hover .button-box {
+  opacity: 1;
+}
+.color-box .fa-solid, .color-box .shade {
+  cursor: pointer;
+}
+.color-box .button-box {
+  display: grid;
+  opacity: 0;
+  height: fit-content;
+  top: 8vh;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+.color-box h2 {
+  padding: 10px;
+  color: #fff;
+  border-radius: 10px;
+  transition: background 0.3s;
+  position: absolute;
+  bottom: 10vh;
+}
+.color-box h2:hover {
+  background: rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+.color-box button {
+  font-size: 2.5vh;
+}
+
+.color-box button,
+#additional button {
+  outline: none;
+  border: none;
+  background: transparent;
+  padding: 8px;
+  border-radius: 10px;
+  margin: 5px;
+  transition: all 0.3s ease;
+}
+.color-box button:hover,
+#additional button:hover {
+  background: rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+button[data-type=add] {
+  position: relative;
+  border: none;
+}
+button[data-type=add] i {
+  position: absolute;
+  z-index: 1;
+  width: 44px;
+  height: 44px;
+  backdrop-filter: blur(100px);
+  left: -22px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25rem;
+  bottom: 10vh;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+button[data-type=add] i:hover {
+  filter: contrast(1.5);
+}
+
+button[data-type=manual] {
+  color: white;
 }
 
 #shades-container {
@@ -102,8 +171,7 @@
   padding: 0;
   z-index: 11;
 }
-
-.shade {
+#shades-container .shade {
   width: 100%;
   padding: 5px;
   display: flex;
@@ -112,54 +180,18 @@
   font-size: 16px;
 }
 
-.color-box {
-  flex: 1;
+#backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+  overflow-y: scroll;
   display: flex;
   justify-content: center;
-  position: relative;
-}
-
-.color-box:hover .button-box {
-  opacity: 1;
-}
-
-.button-box {
-  display: grid;
-  opacity: 0;
-  height: fit-content;
-  top: 8vh;
-  position: absolute;
-  transition: all 0.3s ease;
-}
-
-.color-box h2 {
-  padding: 10px;
-  color: #fff;
-  border-radius: 10px;
-  transition: background 0.3s;
-  position: absolute;
-  bottom: 10vh;
-}
-
-.color-box h2:hover {
-  background: rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-}
-
-.color-box button {
-  outline: none;
-  border: none;
-  background: transparent;
-  font-size: 2.5vh;
-  padding: 8px;
-  border-radius: 10px;
-  margin: 5px;
-  transition: all 0.3s ease;
-}
-
-.color-box button:hover {
-  background: rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+  align-items: center;
 }
 
 .blur-overlay {
@@ -176,7 +208,6 @@
   top: -60px;
   opacity: 0;
 }
-
 .blur-overlay .nav-btn {
   margin: 0 0.25rem;
   padding: 0.25rem 1rem;
@@ -185,33 +216,8 @@
   border-radius: 0.5rem;
   font-weight: 700;
 }
-
 .blur-overlay h1 {
   margin-right: 2rem;
-}
-
-button[data-type=add] {
-  position: relative;
-  border: none;
-}
-
-.fa-solid, .shade {
-  cursor: pointer;
-}
-
-button[data-type=add] i {
-  position: absolute;
-  z-index: 1;
-  width: 44px;
-  height: 44px;
-  backdrop-filter: blur(100px);
-  left: -22px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.25rem;
-  bottom: 10vh;
 }
 
 input[type=text] {
@@ -224,12 +230,10 @@ input[type=text] {
   background: rgba(2, 2, 2, 0.4196078431);
   width: 68%;
   border: none;
-  font-size: 1.25rem;
   font-weight: bold;
   text-align: center;
   z-index: 11;
 }
-
 input[type=text]:focus-visible {
   border: none;
   outline: none;
@@ -238,6 +242,57 @@ input[type=text]:focus-visible {
 .input-error:focus {
   border-color: initial;
   background-color: initial;
+}
+
+.modal-content {
+  border-radius: 10px;
+  display: none;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(100px);
+  padding: 20px;
+  width: 50vw;
+}
+.modal-content .close {
+  color: black;
+  float: right;
+  font-size: 28px;
+  transition: all 0.3s ease;
+}
+.modal-content .close:hover, .modal-content .close:focus {
+  color: #c65858;
+  cursor: pointer;
+}
+.modal-content p {
+  margin-bottom: 0.75rem;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+}
+.modal-content b {
+  margin-top: 1.5rem;
+  display: block;
+}
+.modal-content .modal-col-2 {
+  display: grid;
+  grid-template-columns: minmax(40%, 1fr) minmax(60%, 1fr);
+  grid-gap: 10px;
+  overflow: hidden;
+}
+.modal-content .modal-col-2 .color-block {
+  border-radius: 10px;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: linear-gradient(to right, #d1e4ff, #daffd2, #ffcaed);
+  background-size: 200% 100%;
+  animation: gradientAnimation 20s ease infinite;
+}
+.modal-content .modal-col-2 .color-block table i {
+  cursor: default;
+}
+.modal-content .modal-col-2 .color-block table td {
+  font-weight: 400;
+  text-align: start;
+  padding: 5px 3px;
 }
 
 /*# sourceMappingURL=styles.css.map*/

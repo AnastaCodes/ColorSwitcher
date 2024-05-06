@@ -48,6 +48,7 @@ function updateColorsAfterUserInteraction() {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createBackdrop: () => (/* binding */ createBackdrop),
 /* harmony export */   editHexValue: () => (/* binding */ editHexValue),
 /* harmony export */   setRandomColorForNewItem: () => (/* binding */ setRandomColorForNewItem),
 /* harmony export */   setRandomColors: () => (/* binding */ setRandomColors),
@@ -321,6 +322,9 @@ function copyToClipboard(text) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   updateUI: () => (/* binding */ updateUI)
+/* harmony export */ });
 /* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! chroma-js */ "./node_modules/chroma-js/chroma.js");
 /* harmony import */ var chroma_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(chroma_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _colorUtils_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./colorUtils.js */ "./js/utils/colorUtils.js");
@@ -343,6 +347,9 @@ document.addEventListener('click', (event) => {
     }
     if (type) {
         switch (type) {
+            case 'manual':
+                showModal();
+                break;
             case 'lock':
                 toggleLock(event.target);
                 break;
@@ -415,6 +422,12 @@ function handleAdd(target) {
     }
 }
 
+function adjustFontSize(allColorBoxes, h2) {
+    const boxWidth = allColorBoxes[0].offsetWidth;
+    const fontSize = Math.max(12, Math.min(24, boxWidth / 10));
+    h2.forEach((element) => console.log(element.style.fontSize = `${fontSize}px`));
+}
+
 function handleRepeat(target) {
     const colorBox = target.closest('.color-box');
     (0,_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.setRandomColorForNewItem)(colorBox);
@@ -447,6 +460,8 @@ function handleDropper(target) {
 
 function updateUI() {
     const allColorBoxes = document.querySelectorAll('.color-box');
+    const h2 = document.querySelectorAll('h2');
+    adjustFontSize(allColorBoxes, h2);
     document.querySelectorAll('button[data-type="add"]').forEach(button => button.remove());
     (0,_domUtils_js__WEBPACK_IMPORTED_MODULE_3__.insertPlusButtons)();
 
@@ -460,6 +475,29 @@ function updateUI() {
         document.querySelectorAll('button[data-type="delete"]').forEach(button => button.remove());
     }
     setTimeout(() => (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_2__.updateColorsAfterUserInteraction)(), 0);
+
+}
+
+function showModal() {
+    const modal = document.querySelector(".modal-content");
+    const closeBtn = modal.querySelector(".close");
+    const backdrop = (0,_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.createBackdrop)();
+    document.body.appendChild(backdrop);
+    backdrop.appendChild(modal);
+    modal.style.display = "block";
+
+    function removeModal(event) {
+        event.stopPropagation();
+        backdrop.remove();
+        modal.style.display = "none";
+        document.body.appendChild(modal);
+    }
+
+    backdrop.addEventListener('click', removeModal);
+    closeBtn.addEventListener('click', removeModal);
+    modal.addEventListener('click', function (event) {
+        event.stopPropagation();
+    });
 }
 
 document.body.addEventListener('dragstart', event => {
@@ -495,7 +533,6 @@ document.addEventListener('keydown', event => {
         (0,_colorUtils_js__WEBPACK_IMPORTED_MODULE_1__.setRandomColors)();
     }
 });
-
 
 
 
@@ -4196,6 +4233,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 document.addEventListener('DOMContentLoaded', () => {
     const initialColors = (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_3__.getColorsFromHash)();
 
@@ -4212,6 +4250,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     (0,_utils_colorUtils_js__WEBPACK_IMPORTED_MODULE_2__.setRandomColors)(true);
     (0,_stateManagement_js__WEBPACK_IMPORTED_MODULE_3__.updateColorsAfterUserInteraction)();
+    (0,_utils_eventHandlers_js__WEBPACK_IMPORTED_MODULE_5__.updateUI)();
+
+
 
 });
 })();

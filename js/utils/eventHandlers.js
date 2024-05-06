@@ -5,7 +5,8 @@ import {
     setTextColor,
     showShades,
     updateColorBox,
-    editHexValue
+    editHexValue,
+    createBackdrop
 } from "./colorUtils.js";
 import {updateColorsAfterUserInteraction} from "../stateManagement.js";
 import {copyToClipboard, deleteItem, createItem, insertPlusButtons, deletePlusButtons} from "./domUtils.js";
@@ -22,6 +23,9 @@ document.addEventListener('click', (event) => {
     }
     if (type) {
         switch (type) {
+            case 'manual':
+                showModal();
+                break;
             case 'lock':
                 toggleLock(event.target);
                 break;
@@ -94,6 +98,12 @@ function handleAdd(target) {
     }
 }
 
+function adjustFontSize(allColorBoxes, h2) {
+    const boxWidth = allColorBoxes[0].offsetWidth;
+    const fontSize = Math.max(12, Math.min(24, boxWidth / 10));
+    h2.forEach((element) => console.log(element.style.fontSize = `${fontSize}px`));
+}
+
 function handleRepeat(target) {
     const colorBox = target.closest('.color-box');
     setRandomColorForNewItem(colorBox);
@@ -124,8 +134,10 @@ function handleDropper(target) {
     document.body.removeChild(colorPicker);
 }
 
-function updateUI() {
+export function updateUI() {
     const allColorBoxes = document.querySelectorAll('.color-box');
+    const h2 = document.querySelectorAll('h2');
+    adjustFontSize(allColorBoxes, h2);
     document.querySelectorAll('button[data-type="add"]').forEach(button => button.remove());
     insertPlusButtons();
 
@@ -139,6 +151,29 @@ function updateUI() {
         document.querySelectorAll('button[data-type="delete"]').forEach(button => button.remove());
     }
     setTimeout(() => updateColorsAfterUserInteraction(), 0);
+
+}
+
+function showModal() {
+    const modal = document.querySelector(".modal-content");
+    const closeBtn = modal.querySelector(".close");
+    const backdrop = createBackdrop();
+    document.body.appendChild(backdrop);
+    backdrop.appendChild(modal);
+    modal.style.display = "block";
+
+    function removeModal(event) {
+        event.stopPropagation();
+        backdrop.remove();
+        modal.style.display = "none";
+        document.body.appendChild(modal);
+    }
+
+    backdrop.addEventListener('click', removeModal);
+    closeBtn.addEventListener('click', removeModal);
+    modal.addEventListener('click', function (event) {
+        event.stopPropagation();
+    });
 }
 
 document.body.addEventListener('dragstart', event => {
@@ -174,5 +209,4 @@ document.addEventListener('keydown', event => {
         setRandomColors();
     }
 });
-
 
