@@ -25,7 +25,7 @@ export function createItem(insertAfterButton, color) {
     const buttonConfigs = [
         {iconClass: 'fa-solid fa-lock-open', type: 'lock'},
         {iconClass: 'fa-solid fa-xmark', type: 'delete'},
-        {iconClass: 'fa-solid fa-arrows-left-right', type: 'drug'},
+        {iconClass: 'fa-solid fa-arrows-left-right', type: 'drag'},
         {iconClass: 'fa-regular fa-copy', type: 'copy'},
         {iconClass: 'fa-solid fa-layer-group', type: 'shades'},
         {iconClass: 'fa-solid fa-eye-dropper', type: 'dropper'},

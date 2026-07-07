@@ -101,7 +101,7 @@ function handleAdd(target) {
 function adjustFontSize(allColorBoxes, h2) {
     const boxWidth = allColorBoxes[0].offsetWidth;
     const fontSize = Math.max(12, Math.min(24, boxWidth / 10));
-    h2.forEach((element) => console.log(element.style.fontSize = `${fontSize}px`));
+    h2.forEach((element) => { element.style.fontSize = `${fontSize}px`; });
 }
 
 function handleRepeat(target) {

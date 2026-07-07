@@ -4,7 +4,6 @@ import {setRandomColors} from './utils/colorUtils.js';
 import {getColorsFromHash, updateColorsAfterUserInteraction} from './stateManagement.js';
 import {createItem} from './utils/domUtils.js';
 import {updateUI} from "./utils/eventHandlers.js";
-import * as  hh from "./utils/eventHandlers.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     const initialColors = getColorsFromHash();
